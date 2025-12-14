@@ -3,12 +3,23 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 let supabaseClient: SupabaseClient | null = null;
 
 export function getSupabaseClient(): SupabaseClient {
-  if (supabaseClient) return supabaseClient;
+  // Don't cache in production to ensure fresh env vars are read
+  if (supabaseClient && process.env.NODE_ENV !== "production") {
+    return supabaseClient;
+  }
 
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+  // Debug logging for Railway
+  console.log("Supabase Config Check:", {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseServiceKey,
+    urlPrefix: supabaseUrl?.substring(0, 30),
+  });
+
   if (!supabaseUrl || !supabaseServiceKey) {
+    console.error("Environment variables available:", Object.keys(process.env).filter(k => k.includes("SUPA") || k.includes("GEMINI") || k.includes("VTO")));
     throw new Error(
       "Missing Supabase configuration. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables."
     );
