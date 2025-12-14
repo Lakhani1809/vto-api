@@ -4,6 +4,17 @@ import sharp from "sharp";
 
 export const runtime = "nodejs";
 
+// CORS headers for API access
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 type ImageInput = { data: Buffer; mimeType?: string };
 
 async function fileToImage(file: File | null): Promise<ImageInput | undefined> {
@@ -43,7 +54,7 @@ export async function POST(request: NextRequest) {
     if (!(avatarFile instanceof File)) {
       return NextResponse.json(
         { success: false, message: "Avatar image is required" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -51,13 +62,21 @@ export async function POST(request: NextRequest) {
     const lowerwearFile = formData.get("lowerwear");
     const dressFile = formData.get("dress");
     const layeringFile = formData.get("layering");
-    const accessoryFile = formData.get("accessory");
+    const footwearFile = formData.get("footwear");
+
+    // Handle multiple accessories
+    const accessoryFiles: File[] = [];
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith("accessory") && value instanceof File) {
+        accessoryFiles.push(value);
+      }
+    }
 
     const avatar = await fileToImage(avatarFile);
     if (!avatar || avatar.data.length === 0) {
       return NextResponse.json(
         { success: false, message: "Avatar image is empty or unreadable" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
     console.log("VTO avatar received", {
@@ -75,27 +94,41 @@ export async function POST(request: NextRequest) {
     const layering = await fileToImage(
       layeringFile instanceof File ? layeringFile : null
     );
-    const accessory = await fileToImage(
-      accessoryFile instanceof File ? accessoryFile : null
+    const footwear = await fileToImage(
+      footwearFile instanceof File ? footwearFile : null
     );
+
+    // Process accessories
+    const accessories: ImageInput[] = [];
+    for (const file of accessoryFiles) {
+      const img = await fileToImage(file);
+      if (img) accessories.push(img);
+    }
 
     const upperwearPng = await normalizeGarmentToPng(upperwear);
     const lowerwearPng = await normalizeGarmentToPng(lowerwear);
     const dressPng = await normalizeGarmentToPng(dress);
     const layeringPng = await normalizeGarmentToPng(layering);
-    const accessoryPng = await normalizeGarmentToPng(accessory);
+    const footwearPng = await normalizeGarmentToPng(footwear);
+
+    const accessoriesPng: ImageInput[] = [];
+    for (const acc of accessories) {
+      const normalized = await normalizeGarmentToPng(acc);
+      if (normalized) accessoriesPng.push(normalized);
+    }
 
     const hasGarment =
       Boolean(dress) ||
       Boolean(upperwear) ||
       Boolean(lowerwear) ||
       Boolean(layering) ||
-      Boolean(accessory);
+      Boolean(footwear) ||
+      accessories.length > 0;
 
     if (!hasGarment) {
       return NextResponse.json(
         { success: false, message: "At least one garment image is required" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -107,17 +140,25 @@ export async function POST(request: NextRequest) {
       lowerwear: useDress ? undefined : lowerwearPng,
       dress: dressPng || undefined,
       layering: layeringPng,
-      accessory: accessoryPng,
+      footwear: footwearPng,
+      accessories: accessoriesPng.length > 0 ? accessoriesPng : undefined,
     });
 
     const base64 = outputBuffer.toString("base64");
 
-    return NextResponse.json({ success: true, image: base64 });
+    return NextResponse.json(
+      {
+        success: true,
+        image: base64,
+        dataUrl: `data:image/png;base64,${base64}`,
+      },
+      { headers: corsHeaders }
+    );
   } catch (error) {
     console.error("VTO generation failed", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }

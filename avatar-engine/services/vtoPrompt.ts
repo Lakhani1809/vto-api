@@ -13,17 +13,29 @@ RULES (STRICT):
    - Same buttons, zippers, pockets, seams, logos
    - NO modifications whatsoever
 
-3. NO STYLING
+3. FOOTWEAR = EXACT COPY
+   - Replicate shoes/footwear EXACTLY as uploaded
+   - Same color, style, height, sole, laces, buckles
+   - Position naturally on avatar's feet
+   - NO modifications whatsoever
+
+4. ACCESSORIES = EXACT COPY
+   - Replicate ALL accessories EXACTLY as uploaded
+   - Includes bags, jewelry, watches, hats, scarves, belts, sunglasses
+   - Position naturally on the avatar
+   - NO modifications whatsoever
+
+5. NO STYLING
    - NO tucking shirts
    - NO rolling sleeves  
    - NO cuffing pants
    - NO unbuttoning/buttoning
    - Wear garments EXACTLY as shown in reference
 
-4. OUTPUT
+6. OUTPUT
    - ONE image only (no collage/grid)
    - Full body: head to feet visible
    - Same framing as avatar
 
-Result: Avatar's exact face/body + exact copy of uploaded clothes.`;
+Result: Avatar's exact face/body + exact copy of uploaded clothes, footwear, and accessories.`;
 }

@@ -3,14 +3,6 @@ const nextConfig = {
   // Enable standalone output for better Railway deployment
   output: 'standalone',
   
-  // Increase body size limit for image uploads (default is 1MB)
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-    responseLimit: false,
-  },
-  
   // Optimize images
   images: {
     domains: [],

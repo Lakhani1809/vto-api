@@ -38,14 +38,16 @@ export async function runVtoGeneration({
   lowerwear,
   dress,
   layering,
-  accessory,
+  footwear,
+  accessories,
 }: {
   avatar: VtoImage;
   upperwear?: VtoImage;
   lowerwear?: VtoImage;
   dress?: VtoImage;
   layering?: VtoImage;
-  accessory?: VtoImage;
+  footwear?: VtoImage;
+  accessories?: VtoImage[];
 }): Promise<Buffer> {
   if (!avatar) {
     throw new Error("Avatar image is required for VTO");
@@ -85,9 +87,15 @@ CLOTHING REFERENCES (copy these exactly - same color, pattern, texture, fit, no 
     parts.push({ text: "LAYER (exact copy):" });
     parts.push(await toInlinePart(layering));
   }
-  if (accessory) {
-    parts.push({ text: "ACCESSORY (exact copy):" });
-    parts.push(await toInlinePart(accessory));
+  if (footwear) {
+    parts.push({ text: "FOOTWEAR (exact copy):" });
+    parts.push(await toInlinePart(footwear));
+  }
+  if (accessories && accessories.length > 0) {
+    for (let i = 0; i < accessories.length; i++) {
+      parts.push({ text: `ACCESSORY ${i + 1} (exact copy):` });
+      parts.push(await toInlinePart(accessories[i]));
+    }
   }
 
   // 3. Avatar - the sacred base
@@ -102,9 +110,9 @@ Full body head-to-feet.`,
   // 4. Final instruction - concise
   parts.push({
     text: `---
-OUTPUT: One image. Same person as avatar. Wearing exact copies of the clothes above.
+OUTPUT: One image. Same person as avatar. Wearing exact copies of the clothes, footwear, and accessories above.
 NO styling changes. NO tucking. NO rolling. NO modifications to garments.
-Clothes must match references exactly: color, pattern, texture, silhouette, every detail.`,
+Clothes, footwear, and accessories must match references exactly: color, pattern, texture, silhouette, every detail.`,
   });
 
   // Retry up to 3 times for transient 500 errors
