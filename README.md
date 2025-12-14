@@ -1,25 +1,8 @@
 # Virtual Try-On (VTO) API
 
-Apply clothing and accessories to avatar images using Gemini Flash. This API includes both Avatar Generation and Virtual Try-On functionality with Supabase integration.
+Apply clothing and accessories to avatar images using Gemini Flash AI with Supabase integration.
 
 ## API Endpoints
-
-### POST `/api/avatar`
-
-Generate an avatar from a full-body photo.
-
-**Request:**
-- Content-Type: `multipart/form-data`
-- Field: `image` (image file)
-
-**Response:**
-```json
-{
-  "success": true,
-  "image": "base64_encoded_image",
-  "dataUrl": "data:image/png;base64,..."
-}
-```
 
 ### POST `/api/vto`
 
@@ -67,7 +50,7 @@ Apply clothing to a user's avatar from Supabase.
   "message": "VTO generated successfully",
   "image": "base64_encoded_image",
   "dataUrl": "data:image/png;base64,...",
-  "downloadUrl": "https://your-supabase-url.supabase.co/storage/v1/object/public/vto-outputs/user-id/vto-uuid.png",
+  "downloadUrl": "https://your-supabase-url.supabase.co/storage/v1/object/public/VTO-images/user-id/vto-uuid.png",
   "userId": "user-id"
 }
 ```
@@ -108,7 +91,7 @@ Apply clothing to a user's avatar from Supabase.
      - `id` (UUID, primary key)
      - `avatar_image_url` (text, stores the avatar image URL)
    
-   - Create a storage bucket named `vto-outputs` (or your custom name)
+   - Create a storage bucket named `VTO-images`
    - Make the bucket public for download URLs to work
 
 4. **Run locally**
@@ -119,12 +102,6 @@ Apply clothing to a user's avatar from Supabase.
 
 ## Test UI
 
-### Avatar Generation
-- Visit http://localhost:3000/avatar-test
-- Upload a full-body photo
-- Click "Generate Avatar"
-
-### VTO with Supabase
 - Visit http://localhost:3000/vto-test
 - Enter a valid `user_id` from your `user_profiles` table
 - Upload clothing items (upperwear, lowerwear, dress, layering, footwear, accessories)
@@ -143,21 +120,8 @@ Apply clothing to a user's avatar from Supabase.
    - `VTO_STORAGE_BUCKET`
 3. Railway will auto-detect Next.js and deploy
 4. Your APIs will be available at:
-   - `https://your-app.up.railway.app/api/avatar`
    - `https://your-app.up.railway.app/api/vto`
    - `https://your-app.up.railway.app/api/vto-supabase`
-
-### GitHub
-
-1. Initialize git and push to GitHub:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit - VTO API with Supabase integration"
-   git branch -M main
-   git remote add origin https://github.com/your-username/vto-api.git
-   git push -u origin main
-   ```
 
 ## Notes
 
