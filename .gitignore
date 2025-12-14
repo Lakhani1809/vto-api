@@ -29,6 +29,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Avatar test images (stored in Supabase, not needed in repo)
+public/avatars/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
