@@ -18,20 +18,17 @@
   "description": "Virtual Try-On API powered by Gemini Flash",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "@supabase/supabase-js": "^2.47.10",
     "formidable": "^3.5.4",
     "next": "^16.0.8",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "sharp": "^0.34.5",
-    "uuid": "^11.0.3"
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@types/formidable": "^3.4.6",
     "@types/node": "^24.10.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@types/uuid": "^10.0.0",
     "typescript": "^5.9.3"
   }
 }
